@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Companies - Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-building me-2"></i>Manage Companies</h2>
+            <div class="btn-group">
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list me-2"></i>All Companies ({{ companies.total }})</h5>
+            </div>
+            <div class="card-body">
+                {% if companies.items %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Company Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Prefix</th>
+                                <th>Status</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for company in companies.items %}
+                            <tr>
+                                <td>{{ company.id }}</td>
+                                <td><strong>{{ company.company_name }}</strong></td>
+                                <td>{{ company.email }}</td>
+                                <td>{{ company.phone_number }}</td>
+                                <td><span class="badge bg-primary">{{ company.prefix }}</span></td>
+                                <td>
+                                    {% if company.is_verified %}
+                                        <span class="badge bg-success">Verified</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ company.created_at.strftime('%m/%d/%Y') if company.created_at else 'N/A' }}</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('admin_company_detail', company_id=company.id) }}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="POST" action="{{ url_for('admin_toggle_verification', company_id=company.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-{{ 'warning' if company.is_verified else 'success' }}" 
+                                                    onclick="return confirm('Toggle verification status for {{ company.company_name }}?')">
+                                                <i class="fas fa-{{ 'times' if company.is_verified else 'check' }}"></i>
+                                            </button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin_delete_company', company_id=company.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger" 
+                                                    onclick="return confirm('⚠️ PERMANENT DELETION\\n\\nThis will permanently delete:\\n• Company: {{ company.company_name }}\\n• All their products\\n• All QR codes\\n• All uploaded files\\n\\nThis action CANNOT be undone!\\n\\nType the company name to confirm: {{ company.company_name }}') && prompt('Type the company name exactly to confirm deletion:') === '{{ company.company_name }}'">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if companies.pages > 1 %}
+                <nav aria-label="Companies pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if companies.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_companies', page=companies.prev_num) }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in companies.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != companies.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_companies', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if companies.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_companies', page=companies.next_num) }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-building fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Companies Registered</h4>
+                    <p class="text-muted">Companies will appear here once they register on the platform.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

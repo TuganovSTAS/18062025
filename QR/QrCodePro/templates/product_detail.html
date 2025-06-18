@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if product %}{{ product.product_name }} - {{ company.company_name }}{% else %}Product Not Found{% endif %} - QR Platform
+{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="text-center py-5">
+            <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+            <h2>{{ error }}</h2>
+            <p class="text-muted">The product you're looking for could not be found.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                <i class="fas fa-home me-2"></i>Go Home
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ product.product_name }}</h2>
+                <small class="text-muted">by {{ company.company_name }}</small>
+            </div>
+            <div class="card-body">
+                {% if product.image_url %}
+                <div class="text-center mb-4">
+                    <img src="{{ product.image_url }}" alt="{{ product.product_name }}" 
+                         class="img-fluid rounded" style="max-height: 400px;">
+                </div>
+                {% endif %}
+                
+                {% if product.description %}
+                <div class="mb-4">
+                    <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
+                    <p class="lead">{{ product.description }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-box me-2"></i>Product Details</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Product ID:</strong>
+                                <span class="text-muted">{{ product.product_hash[:16] }}...</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Added:</strong>
+                                <span class="text-muted">{{ product.created_at.strftime('%B %d, %Y') if product.created_at else 'N/A' }}</span>
+                            </li>
+                            {% if product.updated_at and product.updated_at != product.created_at %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Updated:</strong>
+                                <span class="text-muted">{{ product.updated_at.strftime('%B %d, %Y') }}</span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-building me-2"></i>Company Details</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Company:</strong>
+                                <span>{{ company.company_name }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Prefix:</strong>
+                                <span class="badge bg-primary">{{ company.prefix }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Verified:</strong>
+                                {% if company.is_verified %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Contact:</strong>
+                                <span class="text-muted">{{ company.phone_number }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-qrcode me-2"></i>QR Code</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="qr-code-container">
+                    <img src="{{ url_for('generate_qr_route', product_hash=product.product_hash) }}" 
+                         alt="QR Code for {{ product.product_name }}" 
+                         class="img-fluid border rounded mb-3">
+                    <p class="text-muted small">Scan this QR code to share this product</p>
+                    <a href="{{ url_for('generate_qr_route', product_hash=product.product_hash) }}" 
+                       class="btn btn-success btn-sm" target="_blank">
+                        <i class="fas fa-download me-2"></i>Download QR Code
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6><i class="fas fa-share me-2"></i>Share Product</h6>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-2">
+                    <input type="text" class="form-control form-control-sm" 
+                           value="{{ request.url }}" 
+                           id="productUrl" readonly>
+                    <button class="btn btn-outline-secondary btn-sm" type="button" 
+                            onclick="copyToClipboard('productUrl')">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <small class="text-muted">Share this URL or QR code with others</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    element.select();
+    element.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(element.value);
+    
+    // Show feedback
+    const button = element.nextElementSibling;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-check"></i>';
+    setTimeout(() => {
+        button.innerHTML = originalText;
+    }, 2000);
+}
+</script>
+{% endblock %}

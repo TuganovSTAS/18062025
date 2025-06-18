@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Add Product - QR Platform{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-plus me-2"></i>Add New Product</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="product_name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="product_name" name="product_name" required>
+                        <div class="form-text">Enter a unique name for your product.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe your product..."></textarea>
+                        <div class="form-text">Provide a detailed description that will be shown on the product page.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="product_image" class="form-label">Product Image</label>
+                        <input type="file" class="form-control" id="product_image" name="product_image" accept=".png,.jpg,.jpeg,.gif">
+                        <div class="form-text">Upload an image for your product (optional).</div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>QR Code Generation:</strong> A unique QR code will be automatically generated for this product. The QR code will link to a product page containing all the information you provide here.
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Product Hash:</strong> Each product gets a unique SHA256 hash based on the product name and timestamp. This ensures every product has a unique identifier.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add Product & Generate QR
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

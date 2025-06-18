@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Home - QR Platform{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="jumbotron bg-primary text-white p-5 rounded mb-5">
+            <div class="container">
+                <h1 class="display-4">
+                    <i class="fas fa-qrcode me-3"></i>QR Platform
+                </h1>
+                <p class="lead">B2B QR Code Generation Platform for Companies to Register, Manage Products, and Generate Branded QR Codes</p>
+                {% if not session.company_id %}
+                <a class="btn btn-light btn-lg me-3" href="{{ url_for('register') }}">
+                    <i class="fas fa-building me-2"></i>Register Company
+                </a>
+                <a class="btn btn-outline-light btn-lg" href="{{ url_for('login') }}">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </a>
+                {% else %}
+                <a class="btn btn-light btn-lg me-3" href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                </a>
+                <a class="btn btn-outline-light btn-lg" href="{{ url_for('add_product') }}">
+                    <i class="fas fa-plus me-2"></i>Add Product
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-building fa-3x text-primary mb-3"></i>
+                <h4 class="card-title">Company Registration</h4>
+                <p class="card-text">Register your company with automatic 6-digit prefix generation and document verification.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-box fa-3x text-success mb-3"></i>
+                <h4 class="card-title">Product Management</h4>
+                <p class="card-text">Add and manage your products with descriptions, images, and automatic QR code generation.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-qrcode fa-3x text-info mb-3"></i>
+                <h4 class="card-title">QR Code Generation</h4>
+                <p class="card-text">Generate branded QR codes that link to product pages with company information.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fas fa-info-circle me-2"></i>How It Works</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="badge bg-primary rounded-circle p-3 mb-2">
+                            <i class="fas fa-user-plus fa-2x"></i>
+                        </div>
+                        <h5>1. Register</h5>
+                        <p class="text-muted">Sign up your company with required details and document verification.</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="badge bg-success rounded-circle p-3 mb-2">
+                            <i class="fas fa-plus fa-2x"></i>
+                        </div>
+                        <h5>2. Add Products</h5>
+                        <p class="text-muted">Add your products with names, descriptions, and optional images.</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="badge bg-info rounded-circle p-3 mb-2">
+                            <i class="fas fa-qrcode fa-2x"></i>
+                        </div>
+                        <h5>3. Generate QR</h5>
+                        <p class="text-muted">Automatic QR code generation for each product with unique links.</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="badge bg-warning rounded-circle p-3 mb-2">
+                            <i class="fas fa-share fa-2x"></i>
+                        </div>
+                        <h5>4. Share</h5>
+                        <p class="text-muted">Use QR codes on packaging, marketing materials, or digital platforms.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
